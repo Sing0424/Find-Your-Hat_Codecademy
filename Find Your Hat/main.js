@@ -99,8 +99,8 @@ class Field {
             hole: 'O',
             fieldCharacter: '░',
             pathCharacter: '*'
-            }
-            
+            };
+
         const genMap = [];
         this.playerPosX = Math.floor(Math.random() * MapSizeWidth);
         this.playerPosY = Math.floor(Math.random() * MapSizeHeight);
@@ -113,9 +113,9 @@ class Field {
             for (let w = 0; w < width; w++) {
                 let randomSymbol = Math.random();
                 if (randomSymbol > percentage) {
-                    genMap[h].push(symbol.fieldCharacter());
+                    genMap[h].push(symbol.fieldCharacter);
                 } else {
-                    genMap[h].push(symbol.hole());
+                    genMap[h].push(symbol.hole);
                 }
             }
         }
@@ -130,7 +130,6 @@ class Field {
                 hatOnPos = true;
             }
             return genMap;
-        }
     }
     
     print() {
