@@ -96,6 +96,17 @@ class Field {
     }
 
     static generateField(height, width, percentage) {
+<<<<<<< HEAD:main.js
+=======
+        
+        const symbol = {
+            hat: '^',
+            hole: 'O',
+            fieldCharacter: '░',
+            pathCharacter: '*'
+            }
+            
+>>>>>>> parent of 9228092 (20211223_0255):Find Your Hat/main.js
         const genMap = [];
         let randomPosX = Math.floor(Math.random() * (width));
         let randomPosY = Math.floor(Math.random() * (height));
@@ -105,9 +116,15 @@ class Field {
             for (let w = 0; w < width; w++) {
                 let randomSymbol = Math.random();
                 if (randomSymbol > percentage) {
+<<<<<<< HEAD:main.js
                     genMap[h].push(fieldCharacter);
                 } else {
                     genMap[h].push(hole);
+=======
+                    genMap[h].push(symbol.fieldCharacter());
+                } else {
+                    genMap[h].push(symbol.hole());
+>>>>>>> parent of 9228092 (20211223_0255):Find Your Hat/main.js
                 }
             }
         }
@@ -117,7 +134,16 @@ class Field {
                 hatOnPos = true;
             }
         }
+<<<<<<< HEAD:main.js
         return genMap;
+=======
+        while (!playerOnPos) {
+                genMap[this.playerPosY][this.playerPosX] = symbol.hat;
+                hatOnPos = true;
+            }
+            return genMap;
+        }
+>>>>>>> parent of 9228092 (20211223_0255):Find Your Hat/main.js
     }
 
     print() {
