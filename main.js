@@ -7,27 +7,27 @@ const pathCharacter = '*';
 
 const MapSizeHeight = 7;
 const MapSizeWidth = 13;
-let percentage = 0.1;
+let percentage = null;
 let playstat = false;
 
 class Field {
     constructor(field) {
         this.field = field;
-        this.posX = Math.floor(Math.random() * MapSizeWidth);
-        this.posY = Math.floor(Math.random() * MapSizeHeight);
+        this.posX = null;
+        this.posY = null;
         // this.field[0][0] = pathCharacter;
     }
 
 
-    static HardMode() {
+    HardMode() {
         const askHardMode = prompt('Hard Mode?(Y/N)').toUpperCase();
         switch (askHardMode) {
             case 'Y':
                 percentage = 0.2;
-                break;
+                return percentage;
             case 'N':
                 percentage = 0.1;
-                break;
+                return percentage;
             default:
                 console.log('Please type Y/N');
                 this.HardMode();
@@ -37,7 +37,7 @@ class Field {
 
     play() {
         playstat = true;
-        this.field[this.posY][this.posX] = pathCharacter;
+        this.generateField(this.HardMode());
         while (playstat) {
             this.print();
             this.Move();
@@ -95,14 +95,16 @@ class Field {
         return this.field[this.posY][this.posX] === hole;
     }
 
-    static generateField(height, width, percentage) {
+    generateField(percentage) {
         const genMap = [];
-        let randomPosX = Math.floor(Math.random() * (width));
-        let randomPosY = Math.floor(Math.random() * (height));
+        this.posX = Math.floor(Math.random() * MapSizeWidth);
+        this.posY = Math.floor(Math.random() * MapSizeHeight);
+        let randomPosX = Math.floor(Math.random() * MapSizeWidth);
+        let randomPosY = Math.floor(Math.random() * MapSizeHeight);
         let hatOnPos = false;
-        for (let h = 0; h < height; h++) {
+        for (let h = 0; h < MapSizeHeight; h++) {
             genMap.push([]);
-            for (let w = 0; w < width; w++) {
+            for (let w = 0; w < MapSizeWidth; w++) {
                 let randomSymbol = Math.random();
                 if (randomSymbol > percentage) {
                     genMap[h].push(fieldCharacter);
@@ -111,13 +113,14 @@ class Field {
                 }
             }
         }
+        genMap[this.posY][this.posX] = pathCharacter;
         while (!hatOnPos) {
             if (randomPosY != this.posY && randomPosX != this.posX) {
                 genMap[randomPosY][randomPosX] = hat;
                 hatOnPos = true;
             }
         }
-        return genMap;
+        this.field = genMap;
     }
 
     print() {
@@ -127,9 +130,5 @@ class Field {
     }
 }
 
-Field.HardMode();
-
-const newMap = Field.generateField(MapSizeHeight, MapSizeWidth, percentage);
-const myField = new Field(newMap, MapSizeHeight, MapSizeWidth);
-
+const myField = new Field();
 myField.play();
