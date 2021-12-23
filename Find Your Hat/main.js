@@ -1,5 +1,9 @@
 const prompt = require('prompt-sync')({ sigint: true });
 
+const hat = '^';
+const hole = 'O';
+const fieldCharacter = '░';
+const pathCharacter = '*';
 
 const MapSizeHeight = 7;
 const MapSizeWidth = 13;
@@ -9,12 +13,11 @@ let playstat = false;
 class Field {
     constructor(field) {
         this.field = field;
-        this.playerPosX = null;
-        this.playerPosY = null;
-        // this.posX = Math.floor(Math.random() * MapSizeWidth);
-        // this.posY = Math.floor(Math.random() * MapSizeHeight);
+        this.posX = Math.floor(Math.random() * MapSizeWidth);
+        this.posY = Math.floor(Math.random() * MapSizeHeight);
         // this.field[0][0] = pathCharacter;
     }
+
 
     static HardMode() {
         const askHardMode = prompt('Hard Mode?(Y/N)').toUpperCase();
@@ -22,19 +25,19 @@ class Field {
             case 'Y':
                 percentage = 0.2;
                 break;
-                case 'N':
+            case 'N':
                 percentage = 0.1;
                 break;
             default:
                 console.log('Please type Y/N');
                 this.HardMode();
                 break;
-            }
         }
-        
+    }
+
     play() {
         playstat = true;
-        // this.field[this.posY][this.posX] = pathCharacter;
+        this.field[this.posY][this.posX] = pathCharacter;
         while (playstat) {
             this.print();
             this.Move();
@@ -54,7 +57,7 @@ class Field {
             this.field[this.posY][this.posX] = pathCharacter;
         }
     }
-    
+
     Move() {
         const moveInput = prompt('Enter your next step(WASD):').toUpperCase();
         switch (moveInput) {
@@ -67,19 +70,19 @@ class Field {
             case 'S':
                 this.posY += 1;
                 break;
-                case 'D':
-                    this.posX += 1;
-                    break;
-                    default:
-                        console.log('Enter your next step(WASD):');
-                        this.Move();
+            case 'D':
+                this.posX += 1;
+                break;
+            default:
+                console.log('Enter your next step(WASD):');
+                this.Move();
                 break;
         }
     }
 
     checkBoundary() {
         return this.posX >= 0 &&
-        this.posY >= 0 &&
+            this.posY >= 0 &&
             this.posX < this.field[0].length &&
             this.posY < this.field.length;
     }
@@ -93,18 +96,7 @@ class Field {
     }
 
     static generateField(height, width, percentage) {
-        
-        const symbol = {
-            hat: '^',
-            hole: 'O',
-            fieldCharacter: '░',
-            pathCharacter: '*'
-            };
-
         const genMap = [];
-        this.playerPosX = Math.floor(Math.random() * MapSizeWidth);
-        this.playerPosY = Math.floor(Math.random() * MapSizeHeight);
-        let playerOnPos = false;
         let randomPosX = Math.floor(Math.random() * (width));
         let randomPosY = Math.floor(Math.random() * (height));
         let hatOnPos = false;
@@ -113,25 +105,21 @@ class Field {
             for (let w = 0; w < width; w++) {
                 let randomSymbol = Math.random();
                 if (randomSymbol > percentage) {
-                    genMap[h].push(symbol.fieldCharacter);
+                    genMap[h].push(fieldCharacter);
                 } else {
-                    genMap[h].push(symbol.hole);
+                    genMap[h].push(hole);
                 }
             }
         }
         while (!hatOnPos) {
-            if (randomPosY != this.playerPosY && randomPosX != this.playerPosX) {
-                genMap[randomPosY][randomPosX] = symbol.hat;
+            if (randomPosY != this.posY && randomPosX != this.posX) {
+                genMap[randomPosY][randomPosX] = hat;
                 hatOnPos = true;
             }
         }
-        while (!playerOnPos) {
-                genMap[this.playerPosY][this.playerPosX] = symbol.hat;
-                hatOnPos = true;
-            }
-            return genMap;
+        return genMap;
     }
-    
+
     print() {
         for (let i = 0; i < this.field.length; i++) {
             console.log(this.field[i].join(''));
@@ -139,7 +127,7 @@ class Field {
     }
 }
 
-// Field.HardMode();
+Field.HardMode();
 
 const newMap = Field.generateField(MapSizeHeight, MapSizeWidth, percentage);
 const myField = new Field(newMap, MapSizeHeight, MapSizeWidth);
