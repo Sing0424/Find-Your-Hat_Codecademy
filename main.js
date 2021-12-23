@@ -1,6 +1,5 @@
 const prompt = require('prompt-sync')({ sigint: true });
 
-
 const hat = '^';
 const hole = 'O';
 const fieldCharacter = '░';
@@ -16,44 +15,26 @@ const pathCharacter = '*';
 //         this.field = field
 //     }
 // }
-
-class RunGame {
+// }
+class MapSize {
     constructor() {
-        this.playstat;
-    }
-    play() {
-        this.playstat = true;
-        this.generateField(this.HardMode());
-        while (playstat) {
-            this.print();
-            this.Move();
-            if (!this.checkBoundary()) {
-                console.log('You fell outside!');
-                playstat = false;
-                break;
-            } else if (this.checkHolefell()) {
-                console.log('You fell in the hole!');
-                playstat = false;
-                break;
-            } else if (this.checkHatfound()) {
-                console.log('You found the Hat!');
-                playstat = false;
-                break;
-            }
-            this.field[this.posY][this.posX] = pathCharacter;
-        }
-    }
-
-}
-
-class Location {
-    constructor() {
-        this.location = {
-            x: null,
-            y: null,
-        }
+        this.mapSizeWidth = 13;
+        this.mapSizeHeight = 7;
     }
 }
+class startPos {
+    constructor(mapsize = new MapSize) {
+        this.startPosX = Math.floor(Math.random() * mapsize.mapSizeWidth);
+        this.startPosY = Math.floor(Math.random() * mapsize.mapSizeHeight);
+    }
+}
+
+// class PlayerPos {
+//     constructor(startpos = new startPos) {
+//         this.playerPositionX = startpos.startPosX;
+//         this.playerPositionY = startpos.startPosY;
+//     }
+// }
 
 // class Direction {
 //     constructor() {
@@ -90,13 +71,15 @@ class Difficulty {
 }
 
 class Map { // converted from Field
-    constructor(percentage = new Difficulty) {
-        this.MapSizeHeight = 7;
-        this.MapSizeWidth = 13;
-        this.hat = '^';
-        this.hole = 'O';
-        this.fieldCharacter = '░';
-        this.pathCharacter = '*';
+    constructor(percentage = new Difficulty, mapsize = new MapSize, randomStartPos = new startPos) {
+        this.mapsizewidth = mapsize.mapSizeWidth;
+        this.mapsizeheight = mapsize.mapSizeHeight;
+        this.randomStartPosX = randomStartPos.startPosX;
+        this.randomStartPosY = randomStartPos.startPosY;
+        // this.hat = '^';
+        // this.hole = 'O';
+        // this.fieldCharacter = '░';
+        // this.pathCharacter = '*';
         this.percentage = percentage.HardMode();
 
     }
@@ -106,24 +89,24 @@ class Map { // converted from Field
         const genMap = [];
         // this.posX = Math.floor(Math.random() * this.MapSizeWidth);
         // this.posY = Math.floor(Math.random() * this.MapSizeHeight);
-        let randomPosX = Math.floor(Math.random() * this.MapSizeWidth);
-        let randomPosY = Math.floor(Math.random() * this.MapSizeHeight);
+        let randomPosX = Math.floor(Math.random() * this.mapsizewidth);
+        let randomPosY = Math.floor(Math.random() * this.mapsizeheight);
         let hatOnPos = false;
-        for (let h = 0; h < this.MapSizeHeight; h++) {
+        for (let h = 0; h < this.mapsizeheight; h++) {
             genMap.push([]);
-            for (let w = 0; w < this.MapSizeWidth; w++) {
+            for (let w = 0; w < this.mapsizewidth; w++) {
                 let randomSymbol = Math.random();
                 if (randomSymbol > this.percentage) {
-                    genMap[h].push(this.fieldCharacter);
+                    genMap[h].push(fieldCharacter);
                 } else {
-                    genMap[h].push(this.hole);
+                    genMap[h].push(hole);
                 }
             }
         }
-        genMap[this.posY][this.posX] = this.pathCharacter;
+        // genMap[this.randomStartPosY][this.randomStartPosX] = pathCharacter;
         while (!hatOnPos) {
-            if (randomPosY != this.posY && randomPosX != this.posX) {
-                genMap[randomPosY][randomPosX] = this.hat;
+            if (randomPosY != this.randomStartPosY && randomPosX != this.randomStartPosX) {
+                genMap[randomPosY][randomPosX] = hat;
                 hatOnPos = true;
             }
         }
@@ -135,12 +118,10 @@ class Map { // converted from Field
 // console.log(map1.generateField())
 
 class Game {
-    constructor(field = new Map, location = new Location) {
+    constructor(field = new Map, playerPos = new startPos) {
         this.field = field.generateField();
-        this.location = {
-            x: location.location.x,
-            y: location.location.y,
-        }
+        this.playerPosX = playerPos.startPosX;
+        this.playerPosY = playerPos.startPosY;
     }
 
     print() {
@@ -153,16 +134,16 @@ class Game {
         const moveInput = prompt('Enter your next step(WASD):').toUpperCase();
         switch (moveInput) {
             case 'W':
-                this.location.y -= 1;
+                this.playerPosY -= 1;
                 break;
             case 'A':
-                this.location.x -= 1;
+                this.playerPosX -= 1;
                 break;
             case 'S':
-                this.location.y += 1;
+                this.playerPosY += 1;
                 break;
             case 'D':
-                this.location.x += 1;
+                this.playerPosX += 1;
                 break;
             default:
                 console.log('Enter your next step(WASD):');
@@ -172,22 +153,23 @@ class Game {
     }
 
     checkBoundary() {
-        return this.location.x >= 0 &&
-            this.location.y >= 0 &&
-            this.location.x < this.field[0].length &&
-            this.location.y < this.field.length;
+        return this.playerPosX >= 0 &&
+            this.playerPosY >= 0 &&
+            this.playerPosX < this.field[0].length &&
+            this.playerPosY < this.field.length;
     }
 
     checkHatfound() {
-        return this.field[this.location.y][this.location.x] === hat;
+        return this.field[this.playerPosY][this.playerPosX] === hat;
     }
 
     checkHolefell() {
-        return this.field[this.location.y][this.location.x] === hole;
+        return this.field[this.playerPosY][this.playerPosX] === hole;
     }
 
     play() {
         let playstat = true;
+        this.field[this.playerPosY][this.playerPosX] = pathCharacter;
         while (playstat) {
             this.print();
             this.Move();
@@ -204,7 +186,7 @@ class Game {
                 playstat = false;
                 break;
             }
-            this.field[this.location.y][this.location.x] = pathCharacter;
+            this.field[this.playerPosY][this.playerPosX] = pathCharacter;
         }
     }
 }
