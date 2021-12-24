@@ -16,10 +16,11 @@ class MapSize {
     }
 }
 
-class startPos {
-    constructor(mapsize = new MapSize) {
-        this.startPosX = Math.floor(Math.random() * mapsize.mapSizeWidth);
-        this.startPosY = Math.floor(Math.random() * mapsize.mapSizeHeight);
+class startPos extends MapSize {
+    constructor() {
+        super();
+        this.startPosX = Math.floor(Math.random() * this.mapSizeWidth);
+        this.startPosY = Math.floor(Math.random() * this.mapSizeHeight);
     }
 }
 
