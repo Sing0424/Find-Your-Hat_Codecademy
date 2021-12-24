@@ -1,4 +1,5 @@
 const prompt = require('prompt-sync')({ sigint: true });
+var term = require('terminal-kit').terminal;
 
 class Symbol {
     constructor() {
